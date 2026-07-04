@@ -1,12 +1,13 @@
-# MoveCar - 多用户智能挪车系统 (v2.0)
 
-基于 Cloudflare Workers 的智能挪车通知系统，扫码即可通知车主，保护双方隐私。**v2.0 版本现已支持单实例多用户并发使用。**
+# MoveCar - 多用户智能挪车系统 (v3.0)
+
+基于 Cloudflare Workers 的智能挪车通知系统，扫码即可通知车主，保护双方隐私。**v3.0 版本现已支持单实例多用户并发使用。**
 
 ## 🌐 界面预览
 
 | 请求者页面 | 车主页面 |
 |:---:|:---:|
-| [🔗 在线预览](https://htmlpreview.github.io/?https://github.com/lesnolie/movecar/blob/main/preview-requester.html) | [🔗 在线预览](https://htmlpreview.github.io/?https://github.com/lesnolie/movecar/blob/main/preview-owner.html) |
+| [🔗 在线预览](https://htmlpreview.github.io/?https://github.com/slepoh/movecar/blob/main/preview-requester.html) | [🔗 在线预览](https://htmlpreview.github.io/?https://github.com/slepoh/movecar/blob/main/preview-owner.html) |
 
 ---
 ## 新增微信通知界面
@@ -38,6 +39,14 @@
 - 零门槛，只需微信扫码关注即可接收通知。
 - 支持 HTML 格式，点击通知即可直接跳转到确认处理页面。
 
+### Webhook  (自定义通道)
+- 推荐使用 [🔗 基于 Workers & Pages ](https://github.com/frankiejun/wxpush)
+- 免费，每天 10 万次额度。
+- 微信原生弹窗 + 声音提醒
+- 支持多用户，跳转稳定
+- 支持 HTML 格式，点击通知即可直接跳转到确认处理页面。
+- 支持更换皮肤
+
 ---
 
 ## 🔄 使用流程
@@ -57,9 +66,14 @@
 
 ## 📝 更新日志
 
-### (2026-02-27) —— 智能链路与会话持久化升级
+### (2026-03-17) —— 智能链路与会话持久化升级
 
 #### 🚀 核心新特性
+
+* **✅ 修改首页为个人挪车码生成页面**
+    * **一键生成**：输入专属ID，直接生成二维码，无需访问 `/qr` 即可设置挪车码。
+    * **一键打印**：生成后可直接显示您的专属挪车二维码。
+    * **快捷访问**：支持生成成功后一键跳转到专属页面。
 
 * **🛠️ 内置二维码生成工具 (Built-in QR Generator)**
     * **一键生成**：新增 `/qr` 路由，直接访问 `你的域名/qr?u=你的ID` 即可自动生成挪车码，无需借助第三方工具。
@@ -70,6 +84,11 @@
     * **状态保持**：解决了扫码者误关页面、信号切换刷新导致状态丢失的痛点。
     * **智能记忆**：只要在 **30 分钟**有效期内再次扫码，系统将自动识别身份并跳过留言环节，直接恢复至之前的「等待中」或「车主已确认」界面。
     * **消除焦虑**：扫码者可以放心锁定屏幕或关闭网页原地等待，无需担心“断连”。
+ 
+* **🕷新增debug调试页面**
+    * **用户配置**：快速读取Workers & Pages当前变量配置信息。
+    * **调试功能**：一键测试各个消息通道配置信息。
+    * **使用说明**：快速复制变量函数。
 
 #### 🔧 性能与安全优化
 
@@ -112,13 +131,16 @@
 - `BARK_URL`：默认推送地址。
 - `PUSHPLUS_TOKEN`：默认微信令牌。
 
-#### 2. 用户专属变量 (强烈推荐)-PUSHPLUS和Bark看需求选一个或者都配置也行。
+#### 2. 用户专属变量 (强烈推荐)-PUSHPLUS、Bark和Webhook看需求选一个或者都配置也行。
 **格式：`变量名_用户ID` (ID需大写)**。例如你的 ID 是 `xiaowang`：
 - `PUSHPLUS_TOKEN_XIAOWANG`：该用户的专属令牌。
 - `BARK_URL_XIAOWANG`：https://api.day.app/xxxxxxxxxxxxxxxxxxxxxx（用户自己的Bark推送链接，并且末尾不能带 / 斜杠，不用苹果手机的可以不用添加这个变量）。
 - `CAR_TITLE_XIAOWANG`：显示的车辆/车主信息（如：粤B·88888）。
 - `EXTERNAL_URL`：填入你的反代备案域名（例如 https://xx.xxx.com）-（可选，注意：带上https，末尾不要带斜杠)
 - `PHONE_NUMBER_XIAOWANG`：该车主的备用电话-通知车主后没有回应的时候可以直接拨打电话（可选）。
+- `WEBHOOK_URL`：自定义Webhook配置地址（推荐使用[wxpush项目，基于 Workers & Pages ](https://github.com/frankiejun/wxpush)）
+- `WEBHOOK_URL_XIAOWANG`：为特定用户设定专属Webhook通道
+- `CAR_TITLE_XIAOWANG`：为特定用户设定专属车牌号（可在挪车通知页面显示）
 
 ### 第五步：绑定域名 (可选)
 在「Settings」 -> 「Domains & Routes」中绑定你的自定义域名。
